@@ -1,0 +1,96 @@
+{% extends "templates/layout.html" %}
+
+{% block title %}
+  {{ _("Home") }}
+{% endblock %}
+
+{% block page_content %}
+<style>
+  .hs-item {
+    position: relative;
+    overflow: hidden;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
+  .hs-item::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7); /* Dark overlay */
+    z-index: 0;
+  }
+
+  .hs-item > .container {
+    position: relative;
+    z-index: 1; /* Ensures content appears above the dark overlay */
+  }
+
+  .hi-text {
+    color: #fff; /* Makes sure text is white and readable */
+  }
+
+  .primary-btn {
+    background-color: #ff6600;
+    border: none;
+    padding: 10px 25px;
+    color: #fff;
+    text-transform: uppercase;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 4px;
+    display: inline-block;
+    margin-top: 20px;
+  }
+</style>
+
+<!-- Hero Section Begin -->
+<section class="hero-section">
+  <div class="hs-slider owl-carousel">
+
+    <!-- Slide 1 -->
+    <div class="hs-item" style="background-image: url('assets/emtech_app/img/hero/jamie.jpg');">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-6 offset-lg-6">
+            <div class="hi-text">
+              <span>Increase Your Productivity</span>
+              <h1>By <strong>Managing</strong> Your Tasks</h1>
+              <a href="/login" class="primary-btn">Sign In</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 2 -->
+    <div class="hs-item" style="background-image: url('assets/emtech_app/img/hero/jamie.jpg');">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-6 offset-lg-6">
+            <div class="hi-text">
+              <span>Increase Your Productivity</span>
+              <h1>By <strong>Managing</strong> Your Tasks</h1>
+              <a href="/login" class="primary-btn">Sign In</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+<!-- Hero Section End -->
+{% endblock %}
+
+{% block page_script %}
+<script>
+  $(document).ready(function () {
+    $("#home").addClass("active");
+  });
+</script>
+{% endblock %}

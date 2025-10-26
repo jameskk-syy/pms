@@ -1,0 +1,35 @@
+[
+ {
+  "docstatus": 0,
+  "doctype": "Client Script",
+  "dt": "Task",
+  "enabled": 1,
+  "modified": "2025-07-31 12:06:23.565780",
+  "module": "emtech",
+  "name": "Task_roles",
+  "script": "frappe.ui.form.on(\"Task\", {\n    onload: function(frm) {\n        const roles = {\n            \"QA\": \"custom_assign_qa_user\",\n            \"Deployment\": \"custom_assign_deployment_user\",\n            \"Developer\": \"custom_assign_developer\"\n        };\n\n        frappe.call({\n            method: \"emtech_app.services.rest.get_users_by_roles\",\n            callback: function(r) {\n                if (!r.message) return;\n                for (const role in roles) {\n                    const fieldname = roles[role];\n                    frm.set_df_property(fieldname, \"options\", r.message[role].join(\"\\n\"));\n                    if (!frm.doc[fieldname]) {\n                        frm.set_value(fieldname, r.message[role][0] || \"NA\");\n                    }\n                }\n            }\n        });\n\n        // Hide custom_test_status if workflow_state is Pending Developer Completion\n        if (frm.doc.workflow_state === \"Pending Developer Completion\" || frm.doc.workflow_state===\"Pending Developer Recompletion\") {\n            frm.set_df_property(\"custom_test_status\", \"hidden\", 1);\n        } else {\n            frm.set_df_property(\"custom_test_status\", \"hidden\", 0);\n        }\n         if (frm.doc.workflow_state === \"Pending Developer Completion\" || frm.doc.workflow_state===\"Pending Developer Recompletion\") {\n            frm.set_df_property(\"custom_assign_qa_user\", \"read_only\", 0);\n            frm.set_df_property(\"custom_assign_deployment_user\", \"read_only\", 0);\n            frm.set_df_property(\"custom_assign_developer\", \"read_only\", 0);\n        } else {\n            frm.set_df_property(\"custom_assign_qa_user\", \"read_only\", 1);\n            frm.set_df_property(\"custom_assign_deployment_user\", \"read_only\", 1);\n            frm.set_df_property(\"custom_assign_developer\", \"read_only\", 1);\n        }\n        \n        if (frm.doc.workflow_state === \"Pending Developer Completion\" || frm.doc.workflow_state===\"Pending Developer Recompletion\") {\n            frm.set_df_property(\"custom_qa_remarks\", \"hidden\", 1);\n        } else {\n            frm.set_df_property(\"custom_qa_remarks\", \"hidden\", 0);\n        }\n        \n        if (frm.doc.workflow_state === \"pending sign off\" || frm.doc.workflow_state===\"signed\") {\n            cur_frm.set_df_property(\"custom_sign_off\", \"hidden\", 0);\n        } else {\n            cur_frm.set_df_property(\"custom_sign_off\", \"hidden\", 1);\n        }\n        if(frm.doc.workflow_state  === \"Deployed\"){\n            frm.set_df_property(\"custom_program__manager_message_for__sign_off\", \"reqd\", 1);\n            frm.set_df_property(\"custom_date__time__for__sign_off\", \"reqd\", 1);\n            frm.set_df_property(\"custom_program__manager_message_for__sign_off\", \"hidden\", 0);\n            frm.set_df_property(\"custom_date__time__for__sign_off\", \"hidden\", 0);\n        }\n        else{\n            frm.set_df_property(\"custom_program__manager_message_for__sign_off\", \"reqd\", 0);\n            frm.set_df_property(\"custom_date__time__for__sign_off\", \"reqd\", 0);\n            frm.set_df_property(\"custom_program__manager_message_for__sign_off\", \"hidden\", 1);\n            frm.set_df_property(\"custom_date__time__for__sign_off\", \"hidden\", 1);\n        }\n        if (frm.doc.workflow_state === \"pending sign off\") {\n             frm.set_df_property(\"custom_qa_signature\", \"reqd\", 1);\n             frm.set_df_property(\"custom_developer_signature\", \"reqd\", 1);\n             frm.set_df_property(\"custom_program_manager_signature\", \"reqd\", 1);\n        } else {\n            frm.set_df_property(\"custom_qa_signature\", \"reqd\", 0);\n            frm.set_df_property(\"custom_developer_signature\", \"reqd\", 0);\n            frm.set_df_property(\"custom_program_manager_signature\", \"reqd\", 0);\n        }\n        \n        if(frm.doc.workflow_state === \"Pending Qa Testing\" || frm.doc.workflow_state === \"Pending Qa Restesting\"){\n            frm.set_df_property(\"custom_test_status\", \"read_only\", 0);\n        }else{\n            frm.set_df_property(\"custom_test_status\", \"read_only\", 1);\n        }\n        \n        if(frm.doc.workflow_state === \"Pending Qa Testing\" || frm.doc.workflow_state === \"Pending Qa Restesting\"){\n            frm.set_df_property(\"custom_qa_remarks\", \"read_only\", 0);\n        }else{\n            frm.set_df_property(\"custom_qa_remarks\", \"read_only\", 1);\n        }\n        \n        \n    },\n\n    refresh: function(frm) {\n        if (frm.doc.workflow_state === \"Pending Developer Completion\") {\n            frm.set_df_property(\"custom_test_status\", \"hidden\", 1);\n        } else {\n            frm.set_df_property(\"custom_test_status\", \"hidden\", 0);\n        }\n    },\n\n    workflow_state: function(frm) {\n        if (frm.doc.workflow_state === \"Pending Developer Completion\") {\n            frm.set_df_property(\"custom_test_status\", \"hidden\", 1);\n        } else {\n            frm.set_df_property(\"custom_test_status\", \"hidden\", 0);\n        }\n    }\n});\n\n",
+  "view": "Form"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Client Script",
+  "dt": "Task",
+  "enabled": 1,
+  "modified": "2025-07-30 16:44:00.001105",
+  "module": "emtech",
+  "name": "task_list",
+  "script": "frappe.listview_settings['Task'] = {\n    onload: function (listview) {\n        frappe.call({\n            method: \"emtech_app.services.rest.get_listview_access_control\",\n            callback: function (r) {\n                if (r.message && r.message.disable_click) {\n                     frappe.after_ajax(() => {\n                        $('.filter-selector').hide();\n                    });\n                    listview.$result.off('click'); // Disable clicking rows\n                }\n            }\n        });\n    }\n};\n",
+  "view": "List"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Client Script",
+  "dt": "Project",
+  "enabled": 1,
+  "modified": "2025-07-30 16:47:58.811158",
+  "module": "emtech",
+  "name": "project_list",
+  "script": "frappe.listview_settings['Project'] = {\n    onload: function (listview) {\n        frappe.call({\n            method: \"emtech_app.services.rest.get_listview_access_control\",\n            callback: function (r) {\n                if (r.message && r.message.disable_click) {\n                     frappe.after_ajax(() => {\n                        $('.filter-selector').hide();\n                    });\n                    listview.$result.off('click'); // Disable clicking rows\n                }\n            }\n        });\n    }\n};\n",
+  "view": "List"
+ }
+]

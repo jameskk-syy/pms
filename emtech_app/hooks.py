@@ -26,7 +26,7 @@ app_license = "mit"
 
 # include js, css files in header of desk.html
 # app_include_css = "/assets/emtech_app/css/emtech_app.css"
-# app_include_js = "/assets/emtech_app/js/emtech_app.js"
+app_include_js = "/assets/emtech_app/js/emtech.js"
 
 # include js, css files in header of web template
 # web_include_css = "/assets/emtech_app/css/emtech_app.css"
@@ -137,34 +137,37 @@ app_license = "mit"
 # ---------------
 # Hook on document methods and events
 
-# doc_events = {
-# 	"*": {
-# 		"on_update": "method",
-# 		"on_cancel": "method",
-# 		"on_trash": "method"
-# 	}
-# }
+doc_events = {
+    "Task": {
+        "before_save": "emtech_app.services.rest.on_task_submit",
+    }
+}
 
 # Scheduled Tasks
 # ---------------
 
-# scheduler_events = {
-# 	"all": [
-# 		"emtech_app.tasks.all"
-# 	],
-# 	"daily": [
-# 		"emtech_app.tasks.daily"
-# 	],
-# 	"hourly": [
-# 		"emtech_app.tasks.hourly"
-# 	],
-# 	"weekly": [
-# 		"emtech_app.tasks.weekly"
-# 	],
-# 	"monthly": [
-# 		"emtech_app.tasks.monthly"
-# 	],
-# }
+scheduler_events = {
+    "cron": {
+        "*/1 * * * *": [
+            # "emtech_app.services.rest.send_overdue_task_emails"
+        ]
+    },
+    "all": [
+       "emtech_app.services.rest.send_overdue_task_emails"
+    ],
+    "daily": [
+        # "emtech_app.services.rest.send_overdue_task_emails"
+    ],
+    "hourly": [
+    #    "emtech_app.services.rest.send_overdue_task_emails"
+    ],
+    "weekly": [
+        # "emtech_app.tasks.weekly"
+    ],
+    "monthly": [
+        # "emtech_app.tasks.monthly"
+    ],
+}
 
 # Testing
 # -------
@@ -241,4 +244,18 @@ app_license = "mit"
 # default_log_clearing_doctypes = {
 # 	"Logging DocType Name": 30  # days to retain logs
 # }
+fixtures = [
+    "Client Script",
+    "Custom Field",
+    "Print Format",  
+    "Property Setter",
+    "Workspace",   
+    "Web Form",
+    "Role",   
+    "Role Profile",
+    "Module Profile",  
+    "Custom DocPerm",
+    "Workflow",
+    "Workflow State"
+]
 
